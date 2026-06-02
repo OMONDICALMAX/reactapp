@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
@@ -18,36 +17,63 @@ function App() {
 
   const [search, setSearch] = useState("");
 
+  // Add project
   function addProject(project) {
     setProjects([...projects, { ...project, id: Date.now() }]);
   }
 
-  const filteredProjects = projects.filter((p) =>
-    p.title.toLowerCase().includes(search.toLowerCase())
+  // Delete project
+  function deleteProject(id) {
+    setProjects(
+      projects.filter((project) => project.id !== id)
+    );
+  }
+
+  // Edit project
+  function editProject(id) {
+    const newTitle = prompt("Enter new project title:");
+
+    if (!newTitle || newTitle.trim() === "") return;
+
+    setProjects(
+      projects.map((project) =>
+        project.id === id
+          ? { ...project, title: newTitle }
+          : project
+      )
+    );
+  }
+
+  // Search filter
+  const filteredProjects = projects.filter((project) =>
+    project.title
+      .toLowerCase()
+      .includes(search.toLowerCase())
   );
 
   return (
     <div className="container py-4">
-      {/* Header */}
       <Header />
 
-      {/* Search */}
-      <SearchBar search={search} setSearch={setSearch} />
+      <SearchBar
+        search={search}
+        setSearch={setSearch}
+      />
 
-      {/* Layout */}
       <div className="row mt-4">
-        {/* Form */}
-        <div className="col-md-4">
+        <div className="col-md-4 mb-4">
           <ProjectForm addProject={addProject} />
         </div>
 
-        {/* List */}
         <div className="col-md-8">
-          <ProjectList projects={filteredProjects} />
+          <ProjectList
+            projects={filteredProjects}
+            deleteProject={deleteProject}
+            editProject={editProject}
+          />
         </div>
       </div>
 
-      {/* Footer */}
       <Footer />
     </div>
   );
